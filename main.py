@@ -150,25 +150,35 @@ def get_total_places_number(sectors: dict):
     return total_places_number
 
 
-voters_number = voters_number(wishes)
+def get_reformatted_first_wish_stats(wishes: list):
+    first_wishes_stats = wishes[0]["data"]
+    reformatted_first_wish_stats = dict()
+    for sector_stats in first_wishes_stats:
+        reformatted_first_wish_stats["{0}".format(sector_stats["name"])] = sector_stats[
+            "y"
+        ]
+    return reformatted_first_wish_stats
 
-total_places_number = get_total_places_number(sectors)
 
-reformatted_wishes = reformat_wishes(wishes)
+voters_number = voters_number(wishes=wishes)
+total_places_number = get_total_places_number(sectors=sectors)
+reformatted_wishes = reformat_wishes(wishes=wishes)
+reformatted_first_wish_stats = get_reformatted_first_wish_stats(wishes=wishes)
 
 print("Number of voters :", voters_number)
 print("Number of total places :", total_places_number)
 print("Reformatted wishes :", reformatted_wishes)
+print("Reformatted first wish stats", reformatted_first_wish_stats)
 
 
-def plot_example_chart():
+def plot_example_chart(sectors: dict, reformatted_first_wish_stats: dict):
     data = {
-        "Nombre de places offertes": [320, 450, 300, 120, 280],
-        "Nombre de voeu 1": [800, 250, 1200, 150, 300],
+        "Nombre de places offertes": sectors.values(),
+        "Nombre de voeu 1": reformatted_first_wish_stats.values(),
     }
     df = pd.DataFrame(
         data,
-        index=["Computer", "Monitor", "Laptop", "Printer", "Tablet"],
+        index=list(sectors.keys()),
     )
     print(df)
     plt.style.use("ggplot")
@@ -180,8 +190,4 @@ def plot_example_chart():
     plt.show()
 
 
-plot_example_chart()
-
-
-def plot_sector_places_number_chart(sectors):
-    fig, ax = plt.subplots()
+plot_example_chart(sectors, reformatted_first_wish_stats)
